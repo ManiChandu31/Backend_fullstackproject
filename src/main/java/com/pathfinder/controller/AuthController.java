@@ -1,18 +1,24 @@
 package com.pathfinder.controller;
 
 import com.pathfinder.exception.DuplicateResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.pathfinder.exception.UnauthorizedAccessException;
 import com.pathfinder.model.User;
 import com.pathfinder.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Optional;
+import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     public AuthController(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -29,7 +35,12 @@ public class AuthController {
         }
         
         user.setRole("student");
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            log.error("Error saving user: {}", e.toString(), e);
+            throw e;
+        }
     }
 
     @PostMapping("/login")
@@ -71,5 +82,11 @@ public class AuthController {
         }
 
         throw new UnauthorizedAccessException("Incorrect email or password");
+    }
+
+    // DEBUG: temporary endpoint to list users for verification
+    @GetMapping("/users")
+    public List<User> listUsers() {
+        return userRepository.findAll();
     }
 }

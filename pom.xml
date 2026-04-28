@@ -14,7 +14,7 @@
     <name>backend</name>
     <description>Backend for PathFinder</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -38,6 +38,15 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <!-- Compile to Java 21 classfiles to avoid tooling/ASM incompatibility while running on JDK 25 -->
+                    <release>21</release>
+                </configuration>
             </plugin>
         </plugins>
     </build>
